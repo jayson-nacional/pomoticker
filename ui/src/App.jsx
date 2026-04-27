@@ -1,7 +1,9 @@
+import TodoApp from "./TodoApp"
+
 function App() {
 	return (
 		<>
-			This is a placeholder for the pomoticker app
+			<TodoApp />
 		</>
 	)
 }

@@ -1,0 +1,22 @@
+* {
+	font-size: 21px;
+}
+
+.todo-item {
+	border: 1px solid green;
+	margin-bottom: 12px;
+	padding: 6px;
+}
+
+.todo-item button {
+	margin-right: 3px;
+}
+
+ul {
+	list-style-type: none;
+	padding: 0;
+}
+
+input {
+	margin-right: 3px;
+}
