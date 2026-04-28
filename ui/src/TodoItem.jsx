@@ -1,26 +1,32 @@
+import { useState } from "react";
+
 export default function TodoItem({
+	id,
 	name,
 	duration,
 	breakDuration,
 	onDelete,
 	onEdit,
+	onSave,
 	isEditable
 }) {
-	function handleTodoChange() {
-		console.log('todo change handler clicked');
+	const [taskName, setTaskName] = useState(name);
+
+	function handleTodoChange(value) {
+		setTaskName(value);
 	}
 
 	function handleSave() {
-		console.log('handle save is clicked');
+		onSave(id, taskName);
 	}
 
 	return (
 		<>
 			<div className="todo-item">
 				<div>
-					<input value={name}
+					<input value={taskName}
 						disabled={!isEditable}
-						onChange={handleTodoChange}
+						onChange={(e) => handleTodoChange(e.target.value)}
 					/>
 				</div>
 				<div>Duration: {duration}</div>

@@ -21,11 +21,13 @@ export default function TodoApp() {
 		return (
 			<li key={todo.id}>
 				<TodoItem
+					id={todo.id}
 					name={todo.name}
 					duration={todo.duration}
 					breakDuration={todo.breakDuration}
 					onDelete={() => handleDelete(todo.id)}
 					onEdit={() => handleEdit(todo.id)}
+					onSave={handleOnSave}
 					isEditable={itemToEdit === todo.id}
 				/>
 			</li>
@@ -39,6 +41,19 @@ export default function TodoApp() {
 
 	function handleEdit(id) {
 		setItemToEdit(id);
+	}
+
+	function handleOnSave(id, value) {
+		const updatedItems = todoItems.map((item) => {
+			if (item.id === id) {
+				return { ...item, name: value };
+			}
+
+			return item;
+		});
+
+		setTodoItems(updatedItems);
+		setItemToEdit(null);
 	}
 
 	function handleAdd() {
