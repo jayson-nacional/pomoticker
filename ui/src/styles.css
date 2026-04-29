@@ -2,21 +2,29 @@
 	font-size: 21px;
 }
 
-.todo-item {
-	border: 1px solid green;
-	margin-bottom: 12px;
-	padding: 6px;
-}
-
-.todo-item button {
-	margin-right: 3px;
-}
-
 ul {
 	list-style-type: none;
 	padding: 0;
 }
 
 input {
+	margin-right: 3px;
+}
+
+.todo-item {
+	border: 1px solid green;
+	margin-bottom: 12px;
+	padding: 6px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.todo-timer {
+	border: 1px solid red;
+	width: 200px;
+}
+
+.todo-item button {
 	margin-right: 3px;
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TodoItem from "./TodoItem";
 
 const TODOS = [
@@ -11,8 +11,25 @@ const TODOS = [
 ];
 
 let lastId = 1;
+let instanceCount = 0;
 
 export default function TodoApp() {
+	++instanceCount;
+	console.log('Todo App instance count: ' + instanceCount);
+
+	const workerRef = useRef();
+	useEffect(() => {
+		workerRef.current = new Worker(new URL('worker.js', import.meta.url));
+
+		workerRef.current.onmessage = function(event) {
+			setRemainingTimeInSeconds(event.data);
+		}
+
+		return () => {
+			workerRef.current.terminate();
+		};
+	}, []);
+
 	const [todoItems, setTodoItems] = useState(TODOS);
 	const [todoInput, setTodoInput] = useState('');
 	const [itemToEdit, setItemToEdit] = useState(null);
@@ -29,6 +46,7 @@ export default function TodoApp() {
 					onEdit={() => handleEdit(todo.id)}
 					onSave={handleOnSave}
 					isEditable={itemToEdit === todo.id}
+					timerWorker={workerRef.current}
 				/>
 			</li>
 		);
