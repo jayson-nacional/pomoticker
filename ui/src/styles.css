@@ -11,20 +11,25 @@ input {
 	margin-right: 3px;
 }
 
+.timer {
+	border: 1px solid red;
+	margin: 6px;
+	padding: 6px;
+}
+
+.todo-input {
+	border: 1px solid green;
+	margin: 6px;
+	padding: 6px;
+}
+
 .todo-item {
 	border: 1px solid green;
-	margin-bottom: 12px;
+	margin: 6px;
 	padding: 6px;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
 }
 
-.todo-timer {
-	border: 1px solid red;
-	width: 200px;
-}
-
+.timer button,
 .todo-item button {
 	margin-right: 3px;
 }
