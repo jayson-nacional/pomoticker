@@ -2,21 +2,40 @@ import { useEffect, useRef, useState } from "react";
 
 export default function Timer() {
 	const [timeInSeconds, setTimeInSeconds] = useState(25 * 60);
+	const [isRunning, setIsRunning] = useState(false);
 	const workerRef = useRef();
+	const intervalId = useRef();
 
 	useEffect(() => {
 		const worker = new Worker(new URL('worker.js', import.meta.url));
 		workerRef.current = worker;
 
 		workerRef.current.onmessage = (e) => {
-			setTimeInSeconds(e.data);
+			setTimeInSeconds(e.data.duration);
+			intervalId.current = e.data.intervalId;
 		};
 
 		return () => workerRef.current.terminate();
 	}, []);
 
-	function handleStart() {
-		workerRef.current?.postMessage(timeInSeconds);
+	function handleStartPause() {
+		workerRef.current?.postMessage({
+			duration: timeInSeconds,
+			action: isRunning ? 'pause' : 'start',
+			intervalId: intervalId.current
+		});
+		setIsRunning(!isRunning);
+	}
+
+	function handleReset() {
+		if (intervalId.current) {
+			workerRef.current?.postMessage({
+				action: 'reset',
+				intervalId: intervalId.current
+			});
+
+			setTimeInSeconds(25 * 60);
+		}
 	}
 
 	function renderTimeDisplay() {
@@ -36,8 +55,8 @@ export default function Timer() {
 					{renderTimeDisplay()}
 				</div>
 				<div>
-					<button onClick={handleStart}>Start</button>
-					<button>Reset</button>
+					<button onClick={handleStartPause}>{isRunning ? 'Pause' : 'Start'}</button>
+					<button onClick={handleReset}>Reset</button>
 				</div>
 			</div>
 		</>
