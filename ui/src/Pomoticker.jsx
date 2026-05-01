@@ -20,15 +20,20 @@ export default function Pomoticker() {
 		setTodos([...todos, {
 			id: ++currentId,
 			name: todo.name,
-			duration: 25,
-			break: 5
+			duration: todo.taskDuration,
+			breakDuration: todo.breakDuration
 		}]);
 	}
 
 	function handleUpdate(todo) {
 		const updatedTodos = todos.map(item => {
 			if (item.id === todo.id)
-				return { ...item, name: todo.name };
+				return {
+					...item,
+					name: todo.name,
+					duration: todo.taskDuration,
+					breakDuration: todo.breakDuration
+				};
 
 			return item;
 		});
