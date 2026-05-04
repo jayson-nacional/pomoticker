@@ -15,6 +15,7 @@ const TODOS = [
 let currentId = 1;
 export default function Pomoticker() {
 	const [todos, setTodos] = useState(TODOS);
+	const [currentTask, setCurrentTask] = useState(todos[0]);
 
 	function handleAddTodo(todo) {
 		setTodos([...todos, {
@@ -39,16 +40,21 @@ export default function Pomoticker() {
 		});
 
 		setTodos(updatedTodos);
+		setCurrentTask(updatedTodos[0]);
 	}
 
 	function handleDelete(id) {
 		const newTodos = todos.filter(todo => todo.id !== id);
 		setTodos(newTodos);
+		setCurrentTask(newTodos[0]);
 	}
 
 	return (
 		<>
-			<Timer />
+			<Timer
+				currentTask={currentTask}
+				key={currentTask.duration}
+			/>
 			<TodoInput
 				onAdd={handleAddTodo}
 			/>

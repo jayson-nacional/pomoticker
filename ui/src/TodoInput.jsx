@@ -18,8 +18,6 @@ export default function TodoInput({ onAdd }) {
 		});
 
 		setTodoName('');
-		setTaskDuration(null);
-		setBreakDuration(null);
 	}
 
 	function handleTodoNameChange(value) {
