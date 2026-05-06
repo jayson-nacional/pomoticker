@@ -7,24 +7,21 @@ export default function TodoList({
 }) {
 	const output = todos.map((todo) => {
 		return (
-			<li key={todo.id}>
-				<TodoItem
-					id={todo.id}
-					name={todo.name}
-					duration={todo.duration}
-					breakDuration={todo.breakDuration}
-					onDelete={onDelete}
-					onUpdate={onUpdate}
-				/>
-			</li>
+			<TodoItem
+				key={todo.id}
+				id={todo.id}
+				name={todo.name}
+				duration={todo.duration}
+				breakDuration={todo.breakDuration}
+				onDelete={onDelete}
+				onUpdate={onUpdate}
+			/>
 		);
 	});
 
 	return (
 		<>
-			<ul>
-				{output}
-			</ul>
+			{output}
 		</>
 	);
 }

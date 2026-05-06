@@ -55,8 +55,18 @@ export default function Timer({ currentTask }) {
 					{renderTimeDisplay()}
 				</div>
 				<div>
-					<button onClick={handleStartPause}>{isRunning ? 'Pause' : 'Start'}</button>
-					<button onClick={handleReset}>Reset</button>
+					<button
+						type="button"
+						className="btn btn-info"
+						onClick={handleStartPause}>
+						{isRunning ? 'Pause' : 'Start'}
+					</button>
+					<button
+						type="button"
+						className="btn btn-secondary"
+						onClick={handleReset}>
+						Reset
+					</button>
 				</div>
 			</div>
 		</>
