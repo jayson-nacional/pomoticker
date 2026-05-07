@@ -43,30 +43,60 @@ export default function Timer({ currentTask }) {
 		const minutes = (timeInSeconds - seconds) / 60;
 
 		const formattedMinutes = minutes ? minutes : '00';
-		const formattedSeconds = seconds ? seconds : '00';
+		let formattedSeconds = '00';
+		if (seconds) {
+			if (seconds < 10) {
+				formattedSeconds = '0' + seconds;
+			} else {
+				formattedSeconds = seconds;
+			}
+		}
 
 		return formattedMinutes + ':' + formattedSeconds;
 	}
 
+	function calculateProgress() {
+		const percentage = (timeInSeconds / (currentTask.duration * 60)) * 100;
+
+		return (100 - percentage) + "%";
+	}
+
 	return (
 		<>
-			<div className="timer">
-				<div>
-					{renderTimeDisplay()}
+			<div className="card text-center mb-3">
+				<div className="card-header">
+					{currentTask.name}
 				</div>
-				<div>
-					<button
-						type="button"
-						className="btn btn-info"
-						onClick={handleStartPause}>
-						{isRunning ? 'Pause' : 'Start'}
-					</button>
-					<button
-						type="button"
-						className="btn btn-secondary"
-						onClick={handleReset}>
-						Reset
-					</button>
+				<div className="card-body">
+					<h1 className="card-title display-1">
+						{renderTimeDisplay()}
+					</h1>
+					<div
+						className="progress mb-3"
+						role="progressbar"
+						aria-label="Basic example"
+						aria-valuenow="25"
+						aria-valuemin="0"
+						aria-valuemax="100"
+					>
+						<div
+							className="progress-bar bg-success"
+							style={{ "width": calculateProgress() }}></div>
+					</div>
+					<div>
+						<button
+							type="button"
+							className="btn btn-outline-success"
+							onClick={handleStartPause}>
+							{isRunning ? <i className="bi bi-pause-circle"></i> : <i className="bi bi-play-fill"></i>}
+						</button>
+						<button
+							type="button"
+							className="btn btn-outline-secondary"
+							onClick={handleReset}>
+							<i className="bi bi-arrow-counterclockwise"></i>
+						</button>
+					</div>
 				</div>
 			</div>
 		</>
