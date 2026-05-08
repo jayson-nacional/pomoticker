@@ -2,6 +2,7 @@ import { useState } from "react";
 import Timer from "./Timer";
 import TodoInput from "./TodoInput";
 import TodoList from "./TodoList";
+import DeleteModal from "./DeleteModal";
 
 const TODOS = [
 	{
@@ -15,6 +16,7 @@ const TODOS = [
 let currentId = 1;
 export default function Pomoticker() {
 	const [todos, setTodos] = useState(TODOS);
+	const [shouldShowDeleteModal, setShouldShowDeleteModal] = useState(false);
 	const [currentTask, setCurrentTask] = useState(todos[0]);
 
 	function handleAddTodo(todo) {
@@ -43,14 +45,29 @@ export default function Pomoticker() {
 		setCurrentTask(updatedTodos[0]);
 	}
 
-	function handleDelete(id) {
+	function handleConfirmDelete(id) {
 		const newTodos = todos.filter(todo => todo.id !== id);
 		setTodos(newTodos);
 		setCurrentTask(newTodos[0]);
+		setShouldShowDeleteModal(false);
+	}
+
+	function handleCancelDelete() {
+		setShouldShowDeleteModal(false);
+	}
+
+	function handleClickOnDelete() {
+		console.log('clicked delete button');
+		setShouldShowDeleteModal(true);
 	}
 
 	return (
 		<>
+			<DeleteModal
+				onCancel={handleCancelDelete}
+				onConfirm={() => handleConfirmDelete(1)}
+				shouldDelete={shouldShowDeleteModal}
+			/>
 			<Timer
 				currentTask={currentTask}
 				key={currentTask.duration}
@@ -60,7 +77,7 @@ export default function Pomoticker() {
 			/>
 			<TodoList
 				todos={todos}
-				onDelete={handleDelete}
+				onDelete={handleClickOnDelete}
 				onUpdate={handleUpdate}
 			/>
 		</>

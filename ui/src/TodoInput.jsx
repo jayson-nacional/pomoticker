@@ -1,5 +1,5 @@
-import { useState } from "react";
-import * as bootstrap from "bootstrap"
+import { useEffect, useRef, useState } from "react"
+import { Modal } from "bootstrap"
 
 const focusDurations = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
 const breakDurations = [5, 10, 15, 20];
@@ -22,6 +22,7 @@ export default function TodoInput({ onAdd }) {
 		});
 
 		setTodoName('');
+		closeModal();
 	}
 
 	function handleTodoNameChange(value) {
@@ -36,24 +37,35 @@ export default function TodoInput({ onAdd }) {
 		setBreakDuration(value);
 	}
 
-	function handleModalButton() {
-		const modal = document.getElementById('taskFormModal');
-		const bootstrapModal = new bootstrap.Modal(modal);
-		bootstrapModal.show();
-	}
+	const modalRef = useRef(null);
+	const bsModal = useRef(null);
+
+	useEffect(() => {
+		if (modalRef.current) {
+			bsModal.current = new Modal(modalRef.current);
+		}
+
+		return () => {
+			bsModal.current.hide();
+		};
+	}, []);
+
+	const openModal = () => bsModal.current.show();
+	const closeModal = () => bsModal.current.hide();
+
 
 	return (
 		<>
-			<div>
+			<div className="m-3">
 				<button
-					onClick={handleModalButton}
+					onClick={() => openModal()}
 					type="button"
 					className="btn btn-success">
 					<i className="bi bi-plus-lg"> </i>
 					Add
 				</button>
 			</div>
-			<div className="modal" tabIndex="-1" id="taskFormModal">
+			<div className="modal" tabIndex="-1" id="taskFormModal" ref={modalRef}>
 				<div className="modal-dialog">
 					<div className="modal-content">
 						<div className="modal-header">

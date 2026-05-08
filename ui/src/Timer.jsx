@@ -36,6 +36,8 @@ export default function Timer({ currentTask }) {
 
 			setTimeInSeconds(currentTask.duration * 60);
 		}
+
+		setIsRunning(false);
 	}
 
 	function renderTimeDisplay() {
@@ -63,7 +65,7 @@ export default function Timer({ currentTask }) {
 
 	return (
 		<>
-			<div className="card text-center mb-3">
+			<div className="card text-center m-3">
 				<div className="card-header">
 					{currentTask.name}
 				</div>
@@ -86,13 +88,13 @@ export default function Timer({ currentTask }) {
 					<div>
 						<button
 							type="button"
-							className="btn btn-outline-success"
+							className="btn m-1 btn-outline-success"
 							onClick={handleStartPause}>
 							{isRunning ? <i className="bi bi-pause-circle"></i> : <i className="bi bi-play-fill"></i>}
 						</button>
 						<button
 							type="button"
-							className="btn btn-outline-secondary"
+							className="btn m-1 btn-outline-secondary"
 							onClick={handleReset}>
 							<i className="bi bi-arrow-counterclockwise"></i>
 						</button>
