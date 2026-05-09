@@ -4,29 +4,49 @@ import { Modal } from "bootstrap"
 const focusDurations = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
 const breakDurations = [5, 10, 15, 20];
 
-export default function TodoInput({ onAdd }) {
-	const [todoName, setTodoName] = useState('');
-	const [taskDuration, setTaskDuration] = useState(25);
-	const [breakDuration, setBreakDuration] = useState(5);
+export default function TaskForm({
+	action,
+	task,
+	onSave,
+	onCancel
+}) {
+	const [taskName, setTaskName] = useState(task.name);
+	const [taskDuration, setTaskDuration] = useState(task.taskDuration ?? 25);
+	const [breakDuration, setBreakDuration] = useState(task.breakDuration ?? 5);
 
-	function handleAdd() {
-		if (!todoName) {
-			alert('Please enter a todo name');
+	const modalRef = useRef(null);
+	const bsModal = useRef(null);
+
+	useEffect(() => {
+		if (modalRef.current) {
+			bsModal.current = new Modal(modalRef.current);
+			bsModal.current.show();
+		}
+
+		return () => {
+			bsModal.current.hide();
+		};
+	}, []);
+
+	function handleSave() {
+		if (!taskName) {
+			alert('Please identify what you need to do.');
 			return;
 		}
 
-		onAdd({
-			name: todoName,
+		onSave(action, {
+			id: task.id,
+			name: taskName,
 			taskDuration: taskDuration,
 			breakDuration: breakDuration
 		});
 
-		setTodoName('');
-		closeModal();
+		setTaskName('');
+		bsModal.current.hide();
 	}
 
-	function handleTodoNameChange(value) {
-		setTodoName(value);
+	function handleTaskNameChange(value) {
+		setTaskName(value);
 	}
 
 	function handleTaskDurationChange(value) {
@@ -37,47 +57,38 @@ export default function TodoInput({ onAdd }) {
 		setBreakDuration(value);
 	}
 
-	const modalRef = useRef(null);
-	const bsModal = useRef(null);
-
-	useEffect(() => {
-		if (modalRef.current) {
-			bsModal.current = new Modal(modalRef.current);
-		}
-
-		return () => {
-			bsModal.current.hide();
-		};
-	}, []);
-
-	const openModal = () => bsModal.current.show();
-	const closeModal = () => bsModal.current.hide();
-
-
 	return (
 		<>
-			<div className="m-3">
-				<button
-					onClick={() => openModal()}
-					type="button"
-					className="btn btn-success">
-					<i className="bi bi-plus-lg"> </i>
-					Add
-				</button>
-			</div>
-			<div className="modal" tabIndex="-1" id="taskFormModal" ref={modalRef}>
+			<div
+				className="modal"
+				tabIndex="-1"
+				id="taskFormModal"
+				data-bs-backdrop="static"
+				data-bs-keyboard="false"
+				ref={modalRef}>
 				<div className="modal-dialog">
 					<div className="modal-content">
 						<div className="modal-header">
-							<h5 className="modal-title">Add/Edit</h5>
-							<button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							{
+								action === 'create' ?
+									<h5 className="modal-title">Add Task</h5>
+									:
+									<h5 className="modal-title">Edit Task</h5>
+							}
+							<button
+								onClick={onCancel}
+								type="button"
+								className="btn-close"
+								data-bs-dismiss="modal"
+								aria-label="Close">
+							</button>
 						</div>
 						<div className="modal-body">
 							<div className="input-group mb-3">
 								<span className="input-group-text" id="task">I will</span>
 								<input
-									value={todoName}
-									onChange={(e) => handleTodoNameChange(e.target.value)}
+									value={taskName}
+									onChange={(e) => handleTaskNameChange(e.target.value)}
 									type="text"
 									className="form-control"
 									aria-label="todo"
@@ -86,7 +97,7 @@ export default function TodoInput({ onAdd }) {
 							<div className="input-group mb-3">
 								<label className="input-group-text" htmlFor="focus">and focus for</label>
 								<select
-									value={taskDuration}
+									value={action === 'create' ? 25 : taskDuration}
 									onChange={(e) => handleTaskDurationChange(e.target.value)}
 									className="form-select"
 									id="focus">
@@ -125,10 +136,10 @@ export default function TodoInput({ onAdd }) {
 							</div>
 							<div>
 								<button
-									onClick={handleAdd}
+									onClick={handleSave}
 									type="button"
 									className="btn btn-outline-success">
-									Commit!
+									{action === 'create' ? 'Commit!' : 'Save'}
 								</button>
 							</div>
 						</div>

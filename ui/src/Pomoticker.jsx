@@ -1,84 +1,132 @@
 import { useState } from "react";
 import Timer from "./Timer";
-import TodoInput from "./TodoInput";
-import TodoList from "./TodoList";
+import TaskForm from "./TaskForm";
+import TaskList from "./TaskList";
 import DeleteModal from "./DeleteModal";
 
 const TODOS = [
 	{
 		id: 1,
 		name: "Sample task",
-		duration: 25,
+		taskDuration: 25,
 		breakDuration: 5
 	}
 ];
 
 let currentId = 1;
 export default function Pomoticker() {
-	const [todos, setTodos] = useState(TODOS);
-	const [shouldShowDeleteModal, setShouldShowDeleteModal] = useState(false);
-	const [currentTask, setCurrentTask] = useState(todos[0]);
+	const [tasks, setTasks] = useState(TODOS);
+	const [shouldOpenTaskForm, setShouldOpenTaskForm] = useState(false);
+	const [taskFormAction, setTaskFormAction] = useState('');
+	const [currentTask, setCurrentTask] = useState(tasks[0]);
+	const [taskToEdit, setTaskToEdit] = useState(null);
+	const [shouldConfirmDelete, setShouldConfirmDelete] = useState(false);
+	const [taskToDelete, setTaskToDelete] = useState(null);
 
-	function handleAddTodo(todo) {
-		setTodos([...todos, {
-			id: ++currentId,
-			name: todo.name,
-			duration: todo.taskDuration,
-			breakDuration: todo.breakDuration
-		}]);
+	function handleAddClick() {
+		setTaskFormAction('create');
+		setShouldOpenTaskForm(true);
+		setTaskToEdit(null);
 	}
 
-	function handleUpdate(todo) {
-		const updatedTodos = todos.map(item => {
-			if (item.id === todo.id)
-				return {
-					...item,
-					name: todo.name,
-					duration: todo.taskDuration,
-					breakDuration: todo.breakDuration
-				};
+	function handleSaveTask(action, task) {
+		if (action === 'create') {
+			setTasks([...tasks, {
+				id: ++currentId,
+				name: task.name,
+				taskDuration: task.taskDuration,
+				breakDuration: task.breakDuration
+			}]);
+		} else if (action === 'update') {
+			const updatedTasks = tasks.map(item => {
+				if (item.id === task.id)
+					return {
+						...item,
+						name: task.name,
+						taskDuration: task.taskDuration,
+						breakDuration: task.breakDuration
+					};
 
-			return item;
-		});
+				return item;
+			});
 
-		setTodos(updatedTodos);
-		setCurrentTask(updatedTodos[0]);
+			setTasks(updatedTasks);
+			setCurrentTask(updatedTasks[0]);
+		}
+
+		setTaskFormAction('');
+		setShouldOpenTaskForm(false);
+		setTaskToEdit(null);
 	}
 
-	function handleConfirmDelete(id) {
-		const newTodos = todos.filter(todo => todo.id !== id);
-		setTodos(newTodos);
-		setCurrentTask(newTodos[0]);
-		setShouldShowDeleteModal(false);
+	function handleCancelTask() {
+		setTaskFormAction('');
+		setShouldOpenTaskForm(false);
+		setTaskToEdit(null);
+	}
+
+	function handleEdit(id) {
+		setTaskFormAction('update');
+		setShouldOpenTaskForm(true);
+		setTaskToEdit(id);
 	}
 
 	function handleCancelDelete() {
-		setShouldShowDeleteModal(false);
+		setShouldConfirmDelete(false);
 	}
 
-	function handleClickOnDelete() {
-		console.log('clicked delete button');
-		setShouldShowDeleteModal(true);
+	function handleDelete(id) {
+		setTaskToDelete(id);
+		setShouldConfirmDelete(true);
+	}
+
+	function handleConfirmDelete() {
+		const newTodos = tasks.filter(todo => todo.id !== taskToDelete);
+		setTasks(newTodos);
+		setCurrentTask(newTodos[0]);
+		setShouldConfirmDelete(false);
 	}
 
 	return (
 		<>
-			<DeleteModal
-				onCancel={handleCancelDelete}
-				onConfirm={() => handleConfirmDelete(1)}
-				shouldDelete={shouldShowDeleteModal}
-			/>
+			{
+				shouldConfirmDelete &&
+				<DeleteModal
+					taskToDelete={taskToDelete}
+					onCancel={handleCancelDelete}
+					onConfirm={handleConfirmDelete}
+				/>
+			}
 			<Timer
 				currentTask={currentTask}
-				key={currentTask.duration}
+				key={currentTask.taskDuration + ":" + currentTask.breakDuration}
 			/>
-			<TodoInput
-				onAdd={handleAddTodo}
-			/>
-			<TodoList
-				todos={todos}
-				onDelete={handleClickOnDelete}
-				onUpdate={handleUpdate}
+			<div className="m-3">
+				<button
+					onClick={handleAddClick}
+					type="button"
+					className="btn btn-success">
+					<i className="bi bi-plus-lg"> </i>
+					Add
+				</button>
+			</div>
+			{
+				shouldOpenTaskForm &&
+				<TaskForm
+					action={taskFormAction}
+					task={taskToEdit ? tasks.find(task => task.id === taskToEdit) : {
+						name: '',
+						taskDuration: 25,
+						breakDuration: 5
+					}}
+					onSave={handleSaveTask}
+					onCancel={handleCancelTask}
+				/>
+			}
+			<TaskList
+				tasks={tasks}
+				onEdit={handleEdit}
+				onDelete={handleDelete}
 			/>
 		</>
 	);

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 export default function Timer({ currentTask }) {
-	const [timeInSeconds, setTimeInSeconds] = useState(currentTask.duration * 60);
+	const [timeInSeconds, setTimeInSeconds] = useState(currentTask.taskDuration * 60);
 	const [isRunning, setIsRunning] = useState(false);
 	const workerRef = useRef();
 	const intervalId = useRef();
@@ -34,7 +34,7 @@ export default function Timer({ currentTask }) {
 				intervalId: intervalId.current
 			});
 
-			setTimeInSeconds(currentTask.duration * 60);
+			setTimeInSeconds(currentTask.taskDuration * 60);
 		}
 
 		setIsRunning(false);
