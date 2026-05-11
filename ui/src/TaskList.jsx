@@ -13,6 +13,7 @@ export default function TaskList({
 				name={task.name}
 				taskDuration={task.taskDuration}
 				breakDuration={task.breakDuration}
+				status={task.status}
 				onEdit={onEdit}
 				onDelete={onDelete}
 			/>

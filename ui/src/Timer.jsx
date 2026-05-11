@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
-export default function Timer({ currentTask }) {
+export default function Timer({
+	currentTask,
+	onStartPause,
+	onReset,
+	onComplete
+}) {
 	const [timeInSeconds, setTimeInSeconds] = useState(currentTask.taskDuration * 60);
 	const [isRunning, setIsRunning] = useState(false);
 	const workerRef = useRef();
@@ -13,6 +18,10 @@ export default function Timer({ currentTask }) {
 		workerRef.current.onmessage = (e) => {
 			setTimeInSeconds(e.data.duration);
 			intervalId.current = e.data.intervalId;
+
+			if (e.data.duration === 0) {
+				onComplete();
+			}
 		};
 
 		return () => workerRef.current.terminate();
@@ -25,6 +34,7 @@ export default function Timer({ currentTask }) {
 			intervalId: intervalId.current
 		});
 		setIsRunning(!isRunning);
+		onStartPause();
 	}
 
 	function handleReset() {
@@ -38,6 +48,7 @@ export default function Timer({ currentTask }) {
 		}
 
 		setIsRunning(false);
+		onReset();
 	}
 
 	function renderTimeDisplay() {
@@ -58,7 +69,7 @@ export default function Timer({ currentTask }) {
 	}
 
 	function calculateProgress() {
-		const percentage = (timeInSeconds / (currentTask.duration * 60)) * 100;
+		const percentage = (timeInSeconds / (currentTask.taskDuration * 60)) * 100;
 
 		return (100 - percentage) + "%";
 	}

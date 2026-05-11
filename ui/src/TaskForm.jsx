@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react"
 import { Modal } from "bootstrap"
 
-const focusDurations = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
-const breakDurations = [5, 10, 15, 20];
+const focusDurations = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
+const breakDurations = [1, 5, 10, 15, 20];
 
 export default function TaskForm({
 	action,
