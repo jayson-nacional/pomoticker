@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
 export default function Timer({
-	currentTask,
+	duration,
 	onStartPause,
 	onReset,
 	onComplete
 }) {
-	const [timeInSeconds, setTimeInSeconds] = useState(currentTask.taskDuration * 60);
+	const [timeInSeconds, setTimeInSeconds] = useState(duration * 60);
 	const [isRunning, setIsRunning] = useState(false);
 	const workerRef = useRef();
 	const intervalId = useRef();
@@ -44,7 +44,7 @@ export default function Timer({
 				intervalId: intervalId.current
 			});
 
-			setTimeInSeconds(currentTask.taskDuration * 60);
+			setTimeInSeconds(duration * 60);
 		}
 
 		setIsRunning(false);
@@ -69,7 +69,7 @@ export default function Timer({
 	}
 
 	function calculateProgress() {
-		const percentage = (timeInSeconds / (currentTask.taskDuration * 60)) * 100;
+		const percentage = (timeInSeconds / (duration * 60)) * 100;
 
 		return (100 - percentage) + "%";
 	}
@@ -78,7 +78,7 @@ export default function Timer({
 		<>
 			<div className="card text-center m-3">
 				<div className="card-header">
-					{currentTask.name}
+					This is where the task name should go
 				</div>
 				<div className="card-body">
 					<h1 className="card-title display-1">

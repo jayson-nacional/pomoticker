@@ -4,13 +4,26 @@ import TaskForm from "./TaskForm";
 import TaskList from "./TaskList";
 import DeleteModal from "./DeleteModal";
 
+
+const Status = Object.freeze({
+	TODO: 'to do',
+	IN_PROGRESS: 'in progress',
+	TASK_PAUSED: 'task paused',
+	TASK_COMPLETED: 'task completed',
+	BREAK: 'break',
+	BREAK_IN_PROGRESS: 'break in progress',
+	BREAK_PAUSED: 'break paused',
+	BREAK_COMPLETED: 'break completed',
+	COMPLETED: 'completed'
+});
+
 const TODOS = [
 	{
 		id: 1,
 		name: "Sample task",
 		taskDuration: 25,
 		breakDuration: 5,
-		status: "to do"
+		status: Status.TODO
 	}
 ];
 
@@ -19,10 +32,11 @@ export default function Pomoticker() {
 	const [tasks, setTasks] = useState(TODOS);
 	const [shouldOpenTaskForm, setShouldOpenTaskForm] = useState(false);
 	const [taskFormAction, setTaskFormAction] = useState('');
-	const [currentTask, setCurrentTask] = useState(tasks[0]);
 	const [taskToEdit, setTaskToEdit] = useState(null);
 	const [shouldConfirmDelete, setShouldConfirmDelete] = useState(false);
 	const [taskToDelete, setTaskToDelete] = useState(null);
+	const [timerDuration, setTimerDuration] = useState(tasks[0].taskDuration);
+	const [timerStatus, setTimerStatus] = useState(Status.TODO);
 
 	function handleAddClick() {
 		setTaskFormAction('create');
@@ -53,7 +67,7 @@ export default function Pomoticker() {
 			});
 
 			setTasks(updatedTasks);
-			setCurrentTask(updatedTasks[0]);
+			setTimerDuration(updatedTasks[0].taskDuration);
 		}
 
 		setTaskFormAction('');
@@ -85,116 +99,46 @@ export default function Pomoticker() {
 	function handleConfirmDelete() {
 		const newTodos = tasks.filter(todo => todo.id !== taskToDelete);
 		setTasks(newTodos);
-		setCurrentTask(newTodos[0]);
 		setShouldConfirmDelete(false);
 	}
 
 	function handleStartPause() {
 		let newStatus = "";
-		switch (currentTask.status) {
-			case "to do":
-				newStatus = "task in progress";
+		switch (timerStatus) {
+			case Status.TODO:
+			case Status.TASK_PAUSED:
+				newStatus = Status.IN_PROGRESS;
 				break;
-			case "task in progress":
-				newStatus = "task paused";
+			case Status.IN_PROGRESS:
+				newStatus = Status.TASK_PAUSED;
 				break;
-			case "task paused":
-				newStatus = "task in progress";
+			case Status.BREAK:
+			case Status.BREAK_PAUSED:
+				newStatus = Status.BREAK_IN_PROGRESS;
 				break;
-			case "task completed":
-				newStatus = "break";
-				break;
-			case "break":
-				newStatus = "break in progress";
-				break;
-			case "break in progress":
-				newStatus = "break paused";
-				break;
-			case "break paused":
-				newStatus = "break in progress";
-				break;
-			case "break completed":
-				console.log("complete the whole task block");
+			case Status.BREAK_IN_PROGRESS:
+				newStatus = Status.BREAK_PAUSED;
 				break;
 		}
 
-		const updatedTasks = tasks.map(task => {
-			if (task.id === currentTask.id) {
-				return {
-					...currentTask,
-					status: newStatus
-				}
+		const updatedTasks = tasks.map((item, index) => {
+			if (index === 0) {
+				return { ...item, status: newStatus };
 			}
 
-			return task;
+			return item;
 		});
 
+		setTimerStatus(newStatus);
 		setTasks(updatedTasks);
-		setCurrentTask(updatedTasks[0]);
 	}
 
 	function handleReset() {
-		let newStatus = "";
-		switch (currentTask.status) {
-			case "task in progress":
-			case "task paused":
-				newStatus = "to do";
-				break;
-
-			case "break in progress":
-			case "break paused":
-				newStatus = "break";
-				break;
-		}
-
-		const updatedTasks = tasks.map(task => {
-			if (task.id === currentTask.id) {
-				return {
-					...currentTask,
-					status: newStatus
-				}
-			}
-
-			return task;
-		});
-
-		setTasks(updatedTasks);
-		setCurrentTask(updatedTasks[0]);
-	}
-
-	function getCurrentTask() {
-		return currentTask;
+		// TODO: handle reset
 	}
 
 	function handleComplete() {
-		console.log("complete was triggered");
-		let newStatus = "";
-		console.log(currentTask.status);
-		switch (getCurrentTask().status) {
-			case "task in progress":
-				newStatus = "break";
-				break;
-			case "break in progress":
-				newStatus = "completed";
-				break;
-			default:
-				newStatus = "test status";
-				break;
-		}
-
-		const updatedTasks = tasks.map(task => {
-			if (task.id === currentTask.id) {
-				return {
-					...currentTask,
-					status: newStatus
-				}
-			}
-
-			return task;
-		});
-
-		setTasks(updatedTasks);
-		setCurrentTask(updatedTasks[0]);
+		setTimerDuration(tasks[0].breakDuration);
 	}
 
 	return (
@@ -208,11 +152,11 @@ export default function Pomoticker() {
 				/>
 			}
 			<Timer
-				currentTask={currentTask}
+				key={timerDuration}
+				duration={timerDuration}
 				onStartPause={handleStartPause}
 				onReset={handleReset}
 				onComplete={handleComplete}
-				key={currentTask.taskDuration + ":" + currentTask.breakDuration}
 			/>
 			<div className="m-3">
 				<button
