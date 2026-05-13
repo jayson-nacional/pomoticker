@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Timer from "./Timer";
 import TaskForm from "./TaskForm";
 import TaskList from "./TaskList";
@@ -13,7 +13,6 @@ const Status = Object.freeze({
 	BREAK: 'break',
 	BREAK_IN_PROGRESS: 'break in progress',
 	BREAK_PAUSED: 'break paused',
-	BREAK_COMPLETED: 'break completed',
 	COMPLETED: 'completed'
 });
 
@@ -37,6 +36,83 @@ export default function Pomoticker() {
 	const [taskToDelete, setTaskToDelete] = useState(null);
 	const [timerDuration, setTimerDuration] = useState(tasks[0].taskDuration);
 	const [timerStatus, setTimerStatus] = useState(Status.TODO);
+
+	const startPauseHandlerRef = useRef(null);
+	startPauseHandlerRef.current = () => handleStartPause(timerStatus);
+
+	const timerCompleteHandlerRef = useRef(null);
+	timerCompleteHandlerRef.current = () => handleComplete(timerStatus);
+
+	function handleComplete(status) {
+		let newStatus = "";
+		switch (status) {
+			case Status.IN_PROGRESS:
+				newStatus = Status.BREAK;
+				break;
+			case Status.BREAK_IN_PROGRESS:
+				newStatus = Status.COMPLETED;
+				break;
+		}
+
+		const updatedTasks = tasks.map((item, index) => {
+			if (index === 0) {
+				return {
+					...item,
+					status: newStatus
+				};
+			}
+
+			return item;
+		});
+
+
+		if (newStatus === Status.BREAK)
+			setTimerDuration(updatedTasks[0].breakDuration);
+
+		setTimerStatus(newStatus);
+		setTasks(updatedTasks);
+
+	}
+
+	function handleStartPause(status) {
+		let newStatus = "";
+		switch (status) {
+			case Status.TODO:
+			case Status.TASK_PAUSED:
+				newStatus = Status.IN_PROGRESS;
+				break;
+			case Status.IN_PROGRESS:
+				newStatus = Status.TASK_PAUSED;
+				break;
+			case Status.BREAK:
+			case Status.BREAK_PAUSED:
+				newStatus = Status.BREAK_IN_PROGRESS;
+				break;
+			case Status.BREAK_IN_PROGRESS:
+				newStatus = Status.BREAK_PAUSED;
+				break;
+		}
+
+		const updatedTasks = tasks.map((item, index) => {
+			if (index === 0) {
+				return {
+					...item,
+					status: newStatus
+				};
+			}
+
+			return item;
+		});
+
+		setTimerStatus(newStatus);
+		setTasks(updatedTasks);
+	}
+
+	useEffect(() => {
+		console.log('Currently detected timer status where functions should be based: ' + timerStatus);
+		startPauseHandlerRef.current = () => handleStartPause(timerStatus);
+		timerCompleteHandlerRef.current = () => handleComplete(timerStatus);
+	}, [timerStatus]);
 
 	function handleAddClick() {
 		setTaskFormAction('create');
@@ -102,43 +178,8 @@ export default function Pomoticker() {
 		setShouldConfirmDelete(false);
 	}
 
-	function handleStartPause() {
-		let newStatus = "";
-		switch (timerStatus) {
-			case Status.TODO:
-			case Status.TASK_PAUSED:
-				newStatus = Status.IN_PROGRESS;
-				break;
-			case Status.IN_PROGRESS:
-				newStatus = Status.TASK_PAUSED;
-				break;
-			case Status.BREAK:
-			case Status.BREAK_PAUSED:
-				newStatus = Status.BREAK_IN_PROGRESS;
-				break;
-			case Status.BREAK_IN_PROGRESS:
-				newStatus = Status.BREAK_PAUSED;
-				break;
-		}
-
-		const updatedTasks = tasks.map((item, index) => {
-			if (index === 0) {
-				return { ...item, status: newStatus };
-			}
-
-			return item;
-		});
-
-		setTimerStatus(newStatus);
-		setTasks(updatedTasks);
-	}
-
 	function handleReset() {
 		// TODO: handle reset
-	}
-
-	function handleComplete() {
-		setTimerDuration(tasks[0].breakDuration);
 	}
 
 	return (
@@ -154,9 +195,9 @@ export default function Pomoticker() {
 			<Timer
 				key={timerDuration}
 				duration={timerDuration}
-				onStartPause={handleStartPause}
+				onStartPause={() => startPauseHandlerRef.current()}
 				onReset={handleReset}
-				onComplete={handleComplete}
+				onComplete={() => timerCompleteHandlerRef.current()}
 			/>
 			<div className="m-3">
 				<button
