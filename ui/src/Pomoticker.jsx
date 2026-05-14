@@ -3,6 +3,7 @@ import Timer from "./Timer";
 import TaskForm from "./TaskForm";
 import TaskList from "./TaskList";
 import DeleteModal from "./DeleteModal";
+import NavBar from "./NavBar";
 
 
 const Status = Object.freeze({
@@ -226,6 +227,7 @@ export default function Pomoticker() {
 					onConfirm={handleConfirmDelete}
 				/>
 			}
+			<NavBar />
 			<Timer
 				key={tasks[0].id + ':' + timerDuration}
 				name={tasks[0].name}

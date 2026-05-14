@@ -78,7 +78,7 @@ export default function Timer({
 
 	return (
 		<>
-			<div className="card text-center m-3">
+			<div className="card text-center m-3 mt-4">
 				<div className="card-header">
 					{name}
 				</div>
