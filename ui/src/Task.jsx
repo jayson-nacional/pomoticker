@@ -11,7 +11,7 @@ export default function Task({
 		<>
 			<div key={id} className="card m-3" style={{ "width": "36rem" }} >
 				<div className="card-body">
-					<div>{status}</div>
+					<div className="text-secondary">{status}</div>
 					<h5 className="card-title">{name}</h5>
 					<h6 className="card-subtitle mb-2 text-body-secondary">{taskDuration} min focus</h6>
 					<h6 className="card-subtitle mb-2 text-body-secondary">{breakDuration} min break</h6>

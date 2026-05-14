@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Modal } from "bootstrap"
 
 export default function DeleteModal({
+	taskName,
 	onConfirm,
 	onCancel
 }) {
@@ -28,7 +29,7 @@ export default function DeleteModal({
 				<div className="modal-dialog">
 					<div className="modal-content">
 						<div className="modal-body">
-							<p>Are you sure you want to delete?</p>
+							<p>Are you sure you want to delete task '{taskName}'?</p>
 						</div>
 						<div className="modal-footer">
 							<button

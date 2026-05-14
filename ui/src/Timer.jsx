@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 export default function Timer({
+	name,
 	duration,
 	onStartPause,
 	onReset,
@@ -10,7 +11,6 @@ export default function Timer({
 	const [isRunning, setIsRunning] = useState(false);
 	const workerRef = useRef();
 	const intervalId = useRef();
-	console.log('Timer is rendered');
 
 	useEffect(() => {
 		const worker = new Worker(new URL('worker.js', import.meta.url));
@@ -80,7 +80,7 @@ export default function Timer({
 		<>
 			<div className="card text-center m-3">
 				<div className="card-header">
-					This is where the task name should go
+					{name}
 				</div>
 				<div className="card-body">
 					<h1 className="card-title display-1">

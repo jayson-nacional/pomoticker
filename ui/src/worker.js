@@ -13,7 +13,7 @@ onmessage = (e) => {
 
 			if (durationInSeconds === 0)
 				clearInterval(intervalId);
-		}, 100);
+		}, 1000);
 	} else if (action === 'pause' || action === 'reset') {
 		clearInterval(intervalId);
 	}

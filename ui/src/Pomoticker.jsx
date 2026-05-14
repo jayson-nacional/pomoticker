@@ -19,7 +19,7 @@ const Status = Object.freeze({
 const TODOS = [
 	{
 		id: 1,
-		name: "Sample task",
+		name: "Plan my day",
 		taskDuration: 25,
 		breakDuration: 5,
 		status: Status.TODO
@@ -42,6 +42,41 @@ export default function Pomoticker() {
 
 	const timerCompleteHandlerRef = useRef(null);
 	timerCompleteHandlerRef.current = () => handleComplete(timerStatus);
+
+	const resetHandlerRef = useRef(null);
+	resetHandlerRef.current = () => handleReset(timerStatus);
+
+	function handleReset(status) {
+		let newStatus = "";
+		switch (status) {
+			case Status.TODO:
+			case Status.IN_PROGRESS:
+			case Status.TASK_PAUSED:
+				newStatus = Status.TODO;
+				break;
+			case Status.BREAK:
+			case Status.BREAK_IN_PROGRESS:
+			case Status.BREAK_PAUSED:
+				newStatus = Status.BREAK;
+				break;
+		}
+
+		if (newStatus) {
+			const updatedTasks = tasks.map((item, index) => {
+				if (index === 0) {
+					return {
+						...item,
+						status: newStatus
+					};
+				}
+
+				return item;
+			});
+
+			setTimerStatus(newStatus);
+			setTasks(updatedTasks);
+		}
+	}
 
 	function handleComplete(status) {
 		let newStatus = "";
@@ -109,9 +144,9 @@ export default function Pomoticker() {
 	}
 
 	useEffect(() => {
-		console.log('Currently detected timer status where functions should be based: ' + timerStatus);
 		startPauseHandlerRef.current = () => handleStartPause(timerStatus);
 		timerCompleteHandlerRef.current = () => handleComplete(timerStatus);
+		resetHandlerRef.current = () => handleReset(timerStatus);
 	}, [timerStatus]);
 
 	function handleAddClick() {
@@ -176,27 +211,27 @@ export default function Pomoticker() {
 		const newTodos = tasks.filter(todo => todo.id !== taskToDelete);
 		setTasks(newTodos);
 		setShouldConfirmDelete(false);
+		setTimerDuration(newTodos[0].taskDuration);
 	}
 
-	function handleReset() {
-		// TODO: handle reset
-	}
 
 	return (
 		<>
 			{
 				shouldConfirmDelete &&
 				<DeleteModal
+					taskName={tasks.find(task => task.id === taskToDelete).name}
 					taskToDelete={taskToDelete}
 					onCancel={handleCancelDelete}
 					onConfirm={handleConfirmDelete}
 				/>
 			}
 			<Timer
-				key={timerDuration}
+				key={tasks[0].id + ':' + timerDuration}
+				name={tasks[0].name}
 				duration={timerDuration}
 				onStartPause={() => startPauseHandlerRef.current()}
-				onReset={handleReset}
+				onReset={() => resetHandlerRef.current()}
 				onComplete={() => timerCompleteHandlerRef.current()}
 			/>
 			<div className="m-3">
