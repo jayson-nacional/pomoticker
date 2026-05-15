@@ -5,7 +5,6 @@ import TaskList from "./TaskList";
 import DeleteModal from "./DeleteModal";
 import NavBar from "./NavBar";
 
-
 const Status = Object.freeze({
 	TODO: 'to do',
 	IN_PROGRESS: 'in progress',
@@ -35,8 +34,9 @@ export default function Pomoticker() {
 	const [taskToEdit, setTaskToEdit] = useState(null);
 	const [shouldConfirmDelete, setShouldConfirmDelete] = useState(false);
 	const [taskToDelete, setTaskToDelete] = useState(null);
-	const [timerDuration, setTimerDuration] = useState(tasks[0].taskDuration);
+	const [timerDuration, setTimerDuration] = useState(tasks[0]?.taskDuration);
 	const [timerStatus, setTimerStatus] = useState(Status.TODO);
+	const [isTimerRunning, setIsTimerRunning] = useState(false);
 
 	const startPauseHandlerRef = useRef(null);
 	startPauseHandlerRef.current = () => handleStartPause(timerStatus);
@@ -74,6 +74,7 @@ export default function Pomoticker() {
 				return item;
 			});
 
+			setIsTimerRunning(false);
 			setTimerStatus(newStatus);
 			setTasks(updatedTasks);
 		}
@@ -127,6 +128,13 @@ export default function Pomoticker() {
 			case Status.BREAK_IN_PROGRESS:
 				newStatus = Status.BREAK_PAUSED;
 				break;
+		}
+
+		if (newStatus === Status.TODO ||
+			newStatus === Status.BREAK) {
+			setIsTimerRunning(false);
+		} else {
+			setIsTimerRunning(true);
 		}
 
 		const updatedTasks = tasks.map((item, index) => {
@@ -194,6 +202,11 @@ export default function Pomoticker() {
 	}
 
 	function handleEdit(id) {
+		if (isTimerRunning && id === tasks[0].id) {
+			alert('Cannot update task while timer is running');
+			return;
+		}
+
 		setTaskFormAction('update');
 		setShouldOpenTaskForm(true);
 		setTaskToEdit(id);
@@ -204,15 +217,22 @@ export default function Pomoticker() {
 	}
 
 	function handleDelete(id) {
+		if (isTimerRunning && id === tasks[0].id) {
+			alert('Cannot delete task while timer is running');
+			return;
+		}
+
 		setTaskToDelete(id);
 		setShouldConfirmDelete(true);
 	}
 
 	function handleConfirmDelete() {
-		const newTodos = tasks.filter(todo => todo.id !== taskToDelete);
-		setTasks(newTodos);
-		setShouldConfirmDelete(false);
-		setTimerDuration(newTodos[0].taskDuration);
+		if (tasks.length > 0) {
+			const newTodos = tasks.filter(todo => todo.id !== taskToDelete);
+			setTasks(newTodos);
+			setShouldConfirmDelete(false);
+			setTimerDuration(newTodos[0]?.taskDuration);
+		}
 	}
 
 
@@ -228,14 +248,17 @@ export default function Pomoticker() {
 				/>
 			}
 			<NavBar />
-			<Timer
-				key={tasks[0].id + ':' + timerDuration}
-				name={tasks[0].name}
-				duration={timerDuration}
-				onStartPause={() => startPauseHandlerRef.current()}
-				onReset={() => resetHandlerRef.current()}
-				onComplete={() => timerCompleteHandlerRef.current()}
-			/>
+			{
+				tasks.length > 0 &&
+				<Timer
+					key={tasks[0].id + ':' + timerDuration}
+					name={tasks[0].name}
+					duration={timerDuration}
+					onStartPause={() => startPauseHandlerRef.current()}
+					onReset={() => resetHandlerRef.current()}
+					onComplete={() => timerCompleteHandlerRef.current()}
+				/>
+			}
 			<div className="m-3">
 				<button
 					onClick={handleAddClick}
@@ -258,11 +281,14 @@ export default function Pomoticker() {
 					onCancel={handleCancelTask}
 				/>
 			}
-			<TaskList
-				tasks={tasks}
-				onEdit={handleEdit}
-				onDelete={handleDelete}
-			/>
+			{
+				tasks.length > 0 &&
+				<TaskList
+					tasks={tasks}
+					onEdit={handleEdit}
+					onDelete={handleDelete}
+				/>
+			}
 		</>
 	);
 }
