@@ -4,6 +4,7 @@ import TaskForm from "./TaskForm";
 import TaskList from "./TaskList";
 import DeleteModal from "./DeleteModal";
 import NavBar from "./NavBar";
+import FeatureInProgressModal from "./FeatureInProgressModal";
 
 const Status = Object.freeze({
 	TODO: 'to do',
@@ -37,6 +38,7 @@ export default function Pomoticker() {
 	const [timerDuration, setTimerDuration] = useState(tasks[0]?.taskDuration);
 	const [timerStatus, setTimerStatus] = useState(Status.TODO);
 	const [isTimerRunning, setIsTimerRunning] = useState(false);
+	const [showFeatureInProgress, setShowFeatureInProgress] = useState(false);
 
 	const startPauseHandlerRef = useRef(null);
 	startPauseHandlerRef.current = () => handleStartPause(timerStatus);
@@ -235,9 +237,21 @@ export default function Pomoticker() {
 		}
 	}
 
+	function handleCloseFeatureInProgress() {
+		setShowFeatureInProgress(false);
+	}
+
+	function handleLogin() {
+		setShowFeatureInProgress(true);
+	}
+
 
 	return (
 		<>
+			{
+				showFeatureInProgress &&
+				<FeatureInProgressModal onClose={handleCloseFeatureInProgress} />
+			}
 			{
 				shouldConfirmDelete &&
 				<DeleteModal
@@ -247,7 +261,7 @@ export default function Pomoticker() {
 					onConfirm={handleConfirmDelete}
 				/>
 			}
-			<NavBar />
+			<NavBar onLogin={handleLogin} />
 			{
 				tasks.length > 0 &&
 				<Timer

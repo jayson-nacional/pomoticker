@@ -1,4 +1,4 @@
-export default function NavBar() {
+export default function NavBar({ onLogin }) {
 	function renderDate() {
 		const formatter = new Intl.DateTimeFormat('en-US', {
 			year: 'numeric',
@@ -27,7 +27,7 @@ export default function NavBar() {
 						</div>
 					</div>
 					<form className="d-flex">
-						<button className="btn btn-outline-success" type="button">Login</button>
+						<button onClick={onLogin} className="btn btn-outline-success" type="button">Login</button>
 					</form>
 				</div>
 			</nav>
