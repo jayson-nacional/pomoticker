@@ -5,6 +5,7 @@ import TaskList from "./TaskList";
 import DeleteModal from "./DeleteModal";
 import NavBar from "./NavBar";
 import FeatureInProgressModal from "./FeatureInProgressModal";
+import alarm from "./assets/pomo-alarm.mp3";
 
 const Status = Object.freeze({
 	TODO: 'to do',
@@ -111,6 +112,9 @@ export default function Pomoticker() {
 		setTimerStatus(newStatus);
 		setTasks(updatedTasks);
 
+		// alarm
+		const completeAlarm = new Audio(alarm);
+		completeAlarm.play();
 	}
 
 	function handleStartPause(status) {
