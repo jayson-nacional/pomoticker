@@ -9,9 +9,8 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Test
-        run: echo "Testing pipeilne execution"
-      - name: Reveal Path
-        run: pwd
-      - name: Test visibility
-        run: ls
+      - name: Navigate to build directory
+        run: cd ~/home/ubuntu/pomoticker/ui
+        
+      - name: Pull latest changes
+        run: git pull
