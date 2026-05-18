@@ -12,8 +12,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         
-      - name: Go to ui directory
-        run: cd ui
+      - name: Build container
+        run: cd ui & sudo docker build -t pomoticker:latest .
 
-      - name: List ui directory
-        run: ls
