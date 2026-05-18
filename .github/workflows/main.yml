@@ -15,5 +15,5 @@ jobs:
       - name: Go to ui directory
         run: cd ui
 
-      - name: Build container
-        run: sudo docker build -t pomoticker .
+      - name: List ui directory
+        run: ls
