@@ -1,5 +1,9 @@
 name: UI Pipeline
 
+on:
+  push:
+    braches: [ "main" ]
+    
 jobs:
   build:
     runs-on: self-hosted
