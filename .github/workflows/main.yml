@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: Navigate to build directory
-        run: cd ~/home/ubuntu/pomoticker/ui
+        run: cd ../
         
-      - name: Pull latest changes
-        run: git pull
+      - name: Show files
+        run: pwd
