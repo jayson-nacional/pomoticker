@@ -7,4 +7,5 @@ jobs:
     steps:
       - name: Test
         run: echo "Testing pipeilne execution"
+      - name: Test folder creation
         run: mkdir folder_from_pipeline
