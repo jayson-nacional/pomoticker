@@ -17,7 +17,7 @@ jobs:
         run: sudo docker build --no-cache -t pomoticker:latest .
 
       - name: Stop existing container
-        run: docker stop pomoticker_ui_container || true
+        run: sudo docker stop pomoticker_ui_container || true
 
       - name: Run
-        run: docker run -d --name pomoticker_ui_container pomoticker:latest
+        run: sudo docker run -d --name pomoticker_ui_container pomoticker:latest
