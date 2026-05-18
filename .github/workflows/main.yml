@@ -20,4 +20,4 @@ jobs:
         run: sudo docker stop pomoticker_ui_container || true
 
       - name: Run
-        run: sudo docker run -d --name -p 3030:80 pomoticker_ui_container pomoticker:latest
+        run: sudo docker run -d --name pomoticker_ui_container -p 3030:80 pomoticker:latest
