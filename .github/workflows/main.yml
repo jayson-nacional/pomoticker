@@ -9,8 +9,11 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Navigate to build directory
-        run: cd ../
+      - name: Checkout repository
+        uses: actions/checkout@v4
         
-      - name: Show files
+      - name: Got to the build directory
+        run: cd ./pomoticker/ui
+
+      - name: Verify directory
         run: pwd
