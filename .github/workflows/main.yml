@@ -11,5 +11,7 @@ jobs:
     steps:
       - name: Test
         run: echo "Testing pipeilne execution"
+      - name: Reveal Path
+        run: pwd
       - name: Test visibility
         run: ls
