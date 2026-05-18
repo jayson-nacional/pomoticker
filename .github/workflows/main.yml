@@ -1,0 +1,10 @@
+name: UI Pipeline
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Test
+        run: echo "Testing pipeilne execution"
+        run: mkdir folder_from_pipeline
