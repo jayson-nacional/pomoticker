@@ -13,5 +13,5 @@ jobs:
         uses: actions/checkout@v4
         
       - name: Build container
-        run: cd ui & sudo docker build -t pomoticker:latest .
-
+        working-directory: ./ui
+        run: sudo docker build -t pomoticker:latest .
