@@ -12,8 +12,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         
-      - name: Got to the build directory
-        run: cd ./pomoticker/ui
+      - name: List directory
+        run: ls
 
       - name: Verify directory
         run: pwd
