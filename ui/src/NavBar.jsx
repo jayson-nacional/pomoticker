@@ -4,7 +4,6 @@ export default function NavBar({ onLogin }) {
 			year: 'numeric',
 			month: 'long',
 			day: 'numeric',
-			weekday: 'long'
 		});
 
 		return formatter.format(new Date());
@@ -18,11 +17,9 @@ export default function NavBar({ onLogin }) {
 						<div className="card-body">
 							<figure>
 								<blockquote className="blockquote">
-									<p>Thursday</p>
+									<p>{new Date().toLocaleDateString('en-US', { weekday: 'long' })}</p>
 								</blockquote>
-								<div className="blockquote-footer">
-									May 14, 2026
-								</div>
+								<div className="blockquote-footer">{renderDate()}</div>
 							</figure>
 						</div>
 					</div>
