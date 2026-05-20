@@ -97,7 +97,7 @@ export default function TaskForm({
 							<div className="input-group mb-3">
 								<label className="input-group-text" htmlFor="focus">and focus for</label>
 								<select
-									value={action === 'create' ? 25 : taskDuration}
+									value={taskDuration}
 									onChange={(e) => handleTaskDurationChange(e.target.value)}
 									className="form-select"
 									id="focus">
